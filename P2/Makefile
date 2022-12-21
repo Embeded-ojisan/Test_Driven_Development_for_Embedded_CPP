@@ -2,7 +2,7 @@
 SILENCE = @
 
 #---- Outputs ----#
-COMPONENT_NAME = 2nd_part
+COMPONENT_NAME = P2
 #Set this to @ to keep the makefile quiet
 SILENCE = @
 
@@ -39,4 +39,7 @@ CPPUTEST_WARNINGFLAGS = -Wall -Werror -Wswitch-default
 CPPUTEST_WARNINGFLAGS += -Wconversion -Wswitch-enum 
 
 include $(CPPUTEST_HOME)/build/MakefileWorker.mk
+
+$(CPPUTEST_LIB):
+    #   
 
