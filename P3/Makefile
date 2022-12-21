@@ -2,7 +2,7 @@
 SILENCE = @
 
 #---- Outputs ----#
-COMPONENT_NAME = P2
+COMPONENT_NAME = P3
 #Set this to @ to keep the makefile quiet
 SILENCE = @
 
