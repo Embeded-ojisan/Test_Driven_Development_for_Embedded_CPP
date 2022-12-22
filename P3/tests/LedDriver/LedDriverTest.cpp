@@ -2,7 +2,11 @@
 extern "C"
 {
 #include <stdint.h>
+
 #include "include/LedDriver/LedDriver.h"
+#include "include/util/RuntimeError.h"
+
+#include "mocks/RuntimeErrorStub.h"
 }
 
 #include "CppUTest/TestHarness.h"
@@ -86,5 +90,13 @@ TEST(LedDriver, OutOfBoundsTurnOffDoesNoHarm)
     LedDriver_TurnOff(17);
     LedDriver_TurnOff(3141);
     BYTES_EQUAL(0xffff, virtualleds);
+}
+
+TEST(LedDriver, OutOfBoundsProducesRuntimeError)
+{
+    LedDriver_TurnOn(-1);
+    RUNTIME_ERROR("LED Driver: out-of-bounds LED", -1);
+    STRCMP_EQUAL("LED Driver: out-of-bounds LED", RuntimeErrorStub_GetLastError());
+    BYTES_EQUAL(-1, RuntimeErrorStub_GetLastParameter());
 }
 
