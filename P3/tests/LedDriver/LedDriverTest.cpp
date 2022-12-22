@@ -1,10 +1,11 @@
 
+extern "C"
+{
 #include <stdint.h>
-
-#include "LedDriver/LedDriver.h"
+#include "include/LedDriver/LedDriver.h"
+}
 
 #include "CppUTest/TestHarness.h"
-
 
 TEST_GROUP(LedDriver)
 {
