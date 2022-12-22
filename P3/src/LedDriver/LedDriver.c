@@ -1,4 +1,7 @@
+
 #include <stdint.h>
+#include <stdio.h>
+#include <stdbool.h>
 
 #include "include/LedDriver/LedDriver.h"
 
@@ -6,6 +9,12 @@ enum
 {
     ALL_LEDS_ON = ~0,
     ALL_LEDS_OFF = ~ALL_LEDS_ON
+};
+
+enum
+{
+    FIRST_LED = 1,
+    LAST_LED = 16
 };
 
 static uint16_t* ledAddress;
@@ -19,9 +28,17 @@ void LedDriver_TurnAllOn(void);
 
 void LedDriver_TurnOff(int);
 
+bool LedDriver_IsOn(int);
+
 static uint16_t convertLedNumberToBit(int);
 
+static void setLedImageBit(int);
+static void clearLedImageBit(int);
+
 static void UpdateHardware(void);
+
+static bool IsLedOutOfBounds(int LedNumber);
+
 
 void LedDriver_Create(uint16_t* address)
 {
@@ -37,12 +54,12 @@ void LedDriver_Destory(void)
 
 void LedDriver_TurnOn(int ledNumber)
 {
-    if(ledNumber <= 0 || 16 < ledNumber)
+    if(IsLedOutOfBounds(ledNumber))
     {
         return;
     }
 
-    ledsImage |= convertLedNumberToBit(ledNumber);
+    setLedImageBit(ledNumber);
     UpdateHardware();
 }
 
@@ -54,13 +71,18 @@ void LedDriver_TurnAllOn(void)
 
 void LedDriver_TurnOff(int ledNumber)
 {
-    if(ledNumber <= 0 || 16 < ledNumber)
+    if(IsLedOutOfBounds(ledNumber))
     {
         return;
     }
-    
-    ledsImage &= (uint16_t)(~(convertLedNumberToBit(ledNumber)));
+
+    clearLedImageBit(ledNumber);
     UpdateHardware();
+}
+
+bool LedDriver_IsOn(int ledNumber)
+{
+    return 0 != (ledsImage & convertLedNumberToBit(ledNumber));
 }
 
 static uint16_t convertLedNumberToBit(int ledNumber)
@@ -68,7 +90,22 @@ static uint16_t convertLedNumberToBit(int ledNumber)
     return( (uint16_t)( 1 << ( ledNumber - 1 ) ) );
 }
 
+static void setLedImageBit(int ledNumber)
+{
+    ledsImage |= convertLedNumberToBit(ledNumber);
+}
+
+static void clearLedImageBit(int ledNumber)
+{
+    ledsImage &= (uint16_t)~(convertLedNumberToBit(ledNumber));
+}
+
 static void UpdateHardware(void)
 {
     *ledAddress = ledsImage;
+}
+
+static bool IsLedOutOfBounds(int ledNumber)
+{
+    return (ledNumber < FIRST_LED) || (LAST_LED < ledNumber);
 }
