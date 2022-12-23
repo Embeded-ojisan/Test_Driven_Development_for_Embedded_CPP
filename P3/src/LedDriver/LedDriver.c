@@ -27,8 +27,10 @@ void LedDriver_TurnOn(int);
 void LedDriver_TurnAllOn(void);
 
 void LedDriver_TurnOff(int);
+void LedDriver_TurnAllOff(void);
 
 bool LedDriver_IsOn(int);
+bool LedDriver_IsOff(int);
 
 static uint16_t convertLedNumberToBit(int);
 
@@ -80,9 +82,26 @@ void LedDriver_TurnOff(int ledNumber)
     UpdateHardware();
 }
 
+void LedDriver_TurnAllOff(void)
+{
+    ledsImage = ALL_LEDS_OFF;
+    UpdateHardware();
+}
+
+
 bool LedDriver_IsOn(int ledNumber)
 {
+    if(IsLedOutOfBounds(ledNumber))
+    {
+        return false;
+    }
+
     return 0 != (ledsImage & convertLedNumberToBit(ledNumber));
+}
+
+bool LedDriver_IsOff(int ledNumber)
+{
+    return !LedDriver_IsOn(ledNumber);
 }
 
 static uint16_t convertLedNumberToBit(int ledNumber)

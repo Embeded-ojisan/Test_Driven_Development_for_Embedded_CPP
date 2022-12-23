@@ -53,10 +53,25 @@ TEST(LedDriver, TurnOnMultipleLeds)
     BYTES_EQUAL(0x100, virtualleds);
 }
 
+TEST(LedDriver, TurnOffMultipleLeds)
+{
+    LedDriver_TurnAllOn();
+    LedDriver_TurnOff(9);
+    LedDriver_TurnOff(8);
+    BYTES_EQUAL((~0x180)&0xffff, virtualleds);
+}
+
 TEST(LedDriver, AllOn)
 {
     LedDriver_TurnAllOn();
     BYTES_EQUAL(0xffff, virtualleds);
+}
+
+TEST(LedDriver, AllOff)
+{
+    LedDriver_TurnAllOn();
+    LedDriver_TurnAllOff();
+    BYTES_EQUAL(0, virtualleds);
 }
 
 TEST(LedDriver, TurnOffAnyLed)
@@ -107,3 +122,17 @@ TEST(LedDriver, IsOn)
     CHECK_TRUE(LedDriver_IsOn(11));
 }
 
+TEST(LedDriver, OutOfBoundsLedAreaAlwaysOff)
+{
+    CHECK_FALSE(LedDriver_IsOn(0));
+    CHECK_FALSE(LedDriver_IsOn(17));
+    CHECK_TRUE(LedDriver_IsOff(0));
+    CHECK_TRUE(LedDriver_IsOff(17));
+}
+
+TEST(LedDriver, IsOff)
+{
+    CHECK_TRUE(LedDriver_IsOff(11));
+    LedDriver_TurnOn(11);
+    CHECK_FALSE(LedDriver_IsOff(11));
+}
